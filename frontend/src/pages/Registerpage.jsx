@@ -33,7 +33,10 @@ function Registerpage() {
     try {
       const response = await axios.post(
         "http://localhost:5000/user/register",
-        formData
+        formData,
+        {
+          withCredentials: true,
+        }
       );
       if (response.status === 201) {
         toast.success("Registration successful!");
@@ -138,7 +141,7 @@ function Registerpage() {
           <div className="register-footer">
             <p className="register-footer-text">
               Already have an account?{" "}
-              <Link href="/login" className="register-link">
+              <Link to="/login" className="register-link">
                 Sign in
               </Link>
             </p>
