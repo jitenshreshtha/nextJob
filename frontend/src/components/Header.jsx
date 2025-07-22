@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import '../styles/Header.css';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/Header.css";
+import useAuth from "../hooks/useAuth";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
 
+  const handleLogout = async () => {
+    try {
+      const logoutResponse = await axios.post(
+        "http://localhost:5000/user/logout",
+        {},
+        {
+          withCredentials: true,
+        }
+      );
+      if (logoutResponse.status === 200) {
+        toast.success("Logout successful!");
+        navigate("/login");
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  if (loading) {
+    return null;
+  }
   return (
     <header className="header">
       <div className="header-container">
@@ -14,16 +40,20 @@ function Header() {
           </Link>
 
           <nav className="main-nav">
-            <Link to="/" className="nav-link">
-              Find Jobs
-            </Link>
-            <Link to="/post-job" className="nav-link">
-              Post Job
-            </Link>
+            {user?.accountType === "user" && (
+              <Link to="/findJobs" className="nav-link">
+                Find Jobs
+              </Link>
+            )}
+            {user?.accountType === "employer" && (
+              <Link to="/postJobs" className="nav-link">
+                Post Job
+              </Link>
+            )}
           </nav>
 
           <div className="auth-buttons">
-            {!isLoggedIn ? (
+            {!user ? (
               <>
                 <Link to="/login" className="login-button">
                   Login
@@ -33,10 +63,7 @@ function Header() {
                 </Link>
               </>
             ) : (
-              <button
-                onClick={() => setIsLoggedIn(false)}
-                className="logout-button"
-              >
+              <button onClick={handleLogout} className="logout-button">
                 Logout
               </button>
             )}
