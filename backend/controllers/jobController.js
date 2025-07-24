@@ -49,8 +49,7 @@ exports.getAllJobs = async (req, res) => {
   }
 };
 
-
-exports.semanticSearch = async(req,res) =>{
+exports.semanticSearch = async (req, res) => {
   const { query } = req.body;
   try {
     const searchEmbedding = await generateEmbedding(query);
@@ -60,11 +59,39 @@ exports.semanticSearch = async(req,res) =>{
       const similarity = cosineSimilarity(job.embedding, searchEmbedding);
       return { ...job.toObject(), similarity };
     });
-    const sortedJobs= scoredJobs.sort((a,b)=>b.similarity - a.similarity).slice(0,20);
+    const sortedJobs = scoredJobs
+      .sort((a, b) => b.similarity - a.similarity)
+      .slice(0, 20);
     res.status(200).json(sortedJobs);
-
   } catch (error) {
     console.error("Error during semantic search:", error);
     res.status(500).json({ message: "Internal server error" });
   }
-}
+};
+
+exports.getMyJobs = async (req, res) => {
+  try {
+    const employerId = req.user.userId;
+    const myJobs = await Job.find({ postedBy: employerId }).sort({
+      createdAt: -1,
+    });
+    res.status(200).json(myJobs);
+  } catch (error) {
+    console.error("Error fetching my jobs:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getJobById = async (req, res) => {
+  const {id}= req.params;
+  try {
+    const job = await Job.findById(id);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    return res.status(200).json(job);
+  } catch (error) {
+    console.error("Error fetching job:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};

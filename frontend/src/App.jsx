@@ -12,6 +12,8 @@ import Header from "./components/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import FindJobsPage from "./pages/FindJobsPage";
 import PostJobsPage from "./pages/PostJobsPage";
+import MyJobspage from "./pages/MyJobspage";
+import JobDetailsPage from "./pages/JobDetailsPage";
 
 function App() {
   return (
@@ -28,6 +30,10 @@ function App() {
           <Route path="/postJobs" element={<ProtectedRoute allowedRoles={["employer"]}>
             <PostJobsPage />
           </ProtectedRoute>} />
+          <Route path="/myJobs" element={<ProtectedRoute allowedRoles={["employer"]}>
+            <MyJobspage />
+          </ProtectedRoute>} />
+          <Route path="/job/:id/" element={<JobDetailsPage />} />
         </Routes>
       </Router>
       <ToastContainer />

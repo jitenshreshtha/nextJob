@@ -46,9 +46,12 @@ function Header() {
               </Link>
             )}
             {user?.accountType === "employer" && (
-              <Link to="/postJobs" className="nav-link">
-                Post Job
-              </Link>
+              <>
+                <Link to="/postJobs" className="nav-link">
+                  Post Job
+                </Link>
+                <Link to='/myJobs' className="nav-link">Manage Jobs</Link>
+              </>
             )}
           </nav>
 
