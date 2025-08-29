@@ -1,8 +1,10 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import JobCard from "../components/Jobcard";
+import { useNavigate } from "react-router-dom";
 
 function MyJobspage() {
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -22,13 +24,17 @@ function MyJobspage() {
         }
       } catch (error) {
         console.error("Error fetching jobs:", error);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     };
     fetchMyJobs();
   }, []);
+
+  const handleWhoApplied = async (jobId) => {
+    navigate(`/job/${jobId}/applicantlist`);
+
+  };
 
   return (
     <div>
@@ -36,7 +42,25 @@ function MyJobspage() {
       {loading ? (
         <p>loading...</p>
       ) : (
-        jobs.map((job) => <JobCard key={job._id} job={job} />)
+        <ul>
+          {jobs.map((job) => (
+            <li key={job._id}>
+              <h3>{job.title}</h3>
+              <p>
+                <strong>Company:</strong> {job.companyName}
+              </p>
+              <p>
+                <strong>Location:</strong> {job.location}
+              </p>
+              <p>
+                <strong>Status:</strong> Applied
+              </p>
+              <p>
+                <button onClick={() =>handleWhoApplied(job._id)}>See who applied</button>
+              </p>
+            </li>
+          ))}
+        </ul>
       )}
     </div>
   );

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import JobCard from "../components/Jobcard";
 import JobSearchBar from "../components/JobSearchBar";
+import "../styles/Homepage.css";
 
 function Homepage() {
   const [jobs, setJobs] = useState([]);
@@ -26,7 +27,10 @@ function Homepage() {
 
   const handleSearch = async (searchFilters) => {
     try {
-      const response = await axios.post("http://localhost:5000/job/semanticSearch", {query:searchFilters});
+      const response = await axios.post(
+        "http://localhost:5000/job/semanticSearch",
+        { query: searchFilters }
+      );
       if (response.status === 200) {
         setJobs(response.data);
       }
@@ -35,15 +39,17 @@ function Homepage() {
     }
   };
   return (
-    <div>
-      <h1>Find your Next Job</h1>
+    <div className="homepage-container">
+      <h1 className="homepage-title">
+        Find your <span>Next Job</span>
+      </h1>
       <JobSearchBar onSearch={handleSearch} />
 
       <div>
         {loading ? (
           <p>Loading...</p>
         ) : jobs.length > 0 ? (
-          <div>
+          <div className="job-cards-container">
             {jobs.map((job) => (
               <JobCard key={job._id} job={job} />
             ))}

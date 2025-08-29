@@ -11,7 +11,7 @@ function Registerpage() {
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
-    accountType: "",
+    accountType: "user",
     password: "",
     confirmPassword: "",
   });

@@ -1,4 +1,5 @@
 const Job = require("../models/Job");
+const User = require("../models/User");
 const OpenAI = require("openai");
 
 const openai = new OpenAI();
@@ -59,10 +60,17 @@ exports.semanticSearch = async (req, res) => {
       const similarity = cosineSimilarity(job.embedding, searchEmbedding);
       return { ...job.toObject(), similarity };
     });
-    const sortedJobs = scoredJobs
+
+    const threshold = 0.85;
+    const filteredJobs = scoredJobs.filter(
+      (job) => job.similarity >= threshold
+    );
+
+    const sortedJobs = filteredJobs
       .sort((a, b) => b.similarity - a.similarity)
       .slice(0, 20);
     res.status(200).json(sortedJobs);
+
   } catch (error) {
     console.error("Error during semantic search:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -83,15 +91,74 @@ exports.getMyJobs = async (req, res) => {
 };
 
 exports.getJobById = async (req, res) => {
-  const {id}= req.params;
+  const { id } = req.params;
   try {
-    const job = await Job.findById(id);
+    const job = await Job.findById(id).populate("applicants", "_id name email");
     if (!job) {
       return res.status(404).json({ message: "Job not found" });
     }
     return res.status(200).json(job);
   } catch (error) {
     console.error("Error fetching job:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.applyforJob = async (req, res) => {
+  const jobId = req.params.id;
+  const userId = req.user.userId;
+
+  try {
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    if (job.applicants.includes(userId)) {
+      return res.status(400).json({ error: "already applied for the job" });
+    }
+    job.applicants.push(userId);
+    await job.save();
+
+    const user = await User.findById(userId);
+
+    if (!user.appliedJobs.includes(jobId)) {
+      user.appliedJobs.push(jobId);
+      await user.save();
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Applied for the job successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getMyApplications = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const user = await User.findById(userId).populate("appliedJobs");
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.status(200).json(user.appliedJobs);
+  } catch (error) {
+    console.error("Error fetching applications:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.applicantList = async (req, res) => {
+  const jobId = req.params.id;
+  try {
+    const job = await Job.findById(jobId).populate(
+      "applicants",
+      "_id name email"
+    );
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    return res.status(200).json(job.applicants);
+  } catch (error) {
+    console.error("Error fetching applicants:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

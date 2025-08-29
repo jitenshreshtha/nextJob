@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
-import useAuth from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 
@@ -41,16 +41,23 @@ function Header() {
 
           <nav className="main-nav">
             {user?.accountType === "user" && (
-              <Link to="/findJobs" className="nav-link">
-                Find Jobs
-              </Link>
+              <>
+                <Link to="/findJobs" className="nav-link">
+                  Find Jobs
+                </Link>
+                <Link to="/myApplications" className="nav-link">
+                  My Applications
+                </Link>
+              </>
             )}
             {user?.accountType === "employer" && (
               <>
                 <Link to="/postJobs" className="nav-link">
                   Post Job
                 </Link>
-                <Link to='/myJobs' className="nav-link">Manage Jobs</Link>
+                <Link to="/myJobs" className="nav-link">
+                  Manage Jobs
+                </Link>
               </>
             )}
           </nav>

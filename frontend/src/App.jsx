@@ -14,28 +14,67 @@ import FindJobsPage from "./pages/FindJobsPage";
 import PostJobsPage from "./pages/PostJobsPage";
 import MyJobspage from "./pages/MyJobspage";
 import JobDetailsPage from "./pages/JobDetailsPage";
+import MyapplicationsPage from "./pages/MyapplicationsPage";
+import ApplicantListPage from "./pages/ApplicantListPage";
+
+//import context
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
     <>
       <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<Homepage />} />
-          <Route path="/register" element={<Registerpage />} />
-          <Route path="/login" element={<Loginpage />} />
-          <Route path="/findJobs" element={<ProtectedRoute allowedRoles={["user"]}>
-            <FindJobsPage />
-          </ProtectedRoute>} />
-          <Route path="/postJobs" element={<ProtectedRoute allowedRoles={["employer"]}>
-            <PostJobsPage />
-          </ProtectedRoute>} />
-          <Route path="/myJobs" element={<ProtectedRoute allowedRoles={["employer"]}>
-            <MyJobspage />
-          </ProtectedRoute>} />
-          <Route path="/job/:id/" element={<JobDetailsPage />} />
-        </Routes>
+        <AuthProvider>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Homepage />} />
+            <Route path="/register" element={<Registerpage />} />
+            <Route path="/login" element={<Loginpage />} />
+            <Route
+              path="/findJobs"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <FindJobsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myApplications"
+              element={
+                <ProtectedRoute allowedRoles={["user"]}>
+                  <MyapplicationsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/postJobs"
+              element={
+                <ProtectedRoute allowedRoles={["employer"]}>
+                  <PostJobsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/myJobs"
+              element={
+                <ProtectedRoute allowedRoles={["employer"]}>
+                  <MyJobspage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/job/:id/" element={<JobDetailsPage />} />
+            <Route
+              path="/job/:id/applicantlist"
+              element={
+                <ProtectedRoute allowedRoles={["employer"]}>
+                  <ApplicantListPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </AuthProvider>
       </Router>
+
       <ToastContainer />
     </>
   );

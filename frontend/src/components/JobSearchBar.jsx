@@ -1,15 +1,18 @@
 import React, { useState } from "react";
+import "../styles/JobSearchBar.css"; 
 
 const JobSearchBar = ({ onSearch }) => {
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSearch(search, location);
   };
+
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
+    <div className="job-search-container">
+      <form className="job-search-form" onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="Job Title, keywords or company"
@@ -27,4 +30,5 @@ const JobSearchBar = ({ onSearch }) => {
     </div>
   );
 };
+
 export default JobSearchBar;

@@ -9,7 +9,6 @@ const verifyToken = (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // console.log(decoded);
     req.user = decoded;
     next();
   } catch (error) {
@@ -18,4 +17,4 @@ const verifyToken = (req, res, next) => {
       .json({ message: "Invalid token, authorization denied" });
   }
 };
-module.exports = verifyToken;
+module.exports = verifyToken;                                                      

@@ -25,7 +25,7 @@ exports.userRegister = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password,rememberMe } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
@@ -44,7 +44,8 @@ exports.userLogin = async (req, res) => {
       httpOnly: true,
       secure: false,
       sameSite: "lax",
-      path:'/'
+      path:'/',
+      maxAge: rememberMe ? 30 * 24 * 60 * 60 * 1000 : undefined,
     });
     res.status(201).json({ message: "Login successfull" });
   } catch (error) {

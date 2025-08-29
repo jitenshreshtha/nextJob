@@ -12,7 +12,8 @@ const jobSchema = new mongoose.Schema({
     contactEmail: {type:String, required:true},
     applicationDeadline: {type:Date, required:true},
     postedBy: {type:mongoose.Schema.Types.ObjectId, ref:'User', required:true},
-    embedding: { type: [Number], default: [] }
+    embedding: { type: [Number], default: [] },
+    applicants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
 },{
     timestamps: true
 });

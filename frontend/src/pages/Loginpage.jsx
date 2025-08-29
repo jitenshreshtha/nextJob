@@ -11,10 +11,11 @@ function Loginpage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    rememberMe: false,
   });
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    const { name, value, type, checked } = e.target;
+    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -81,7 +82,7 @@ function Loginpage() {
 
             <div className="form-options">
               <label className="remember-me">
-                <input type="checkbox" className="remember-checkbox" />
+                <input type="checkbox" className="remember-checkbox" checked={formData.rememberMe} onChange={handleChange} name="rememberMe" />
                 <span className="remember-text">Remember me</span>
               </label>
               <Link to="/forgot-password" className="forgot-password">
